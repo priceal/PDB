@@ -4,7 +4,7 @@ save_data_on_exit = True
 save_history = True
 save_non_project_files = False
 project_type = 'empty-project-type'
-recent_files = ['matrix/distanceMatrixBySeq.py', 'matrix/distanceMatrix_old.py', 'matrix/contactMatrix_old.py', 'matrix/aaContactMatrix.py', 'makeProteinArray.py', 'matrix/distanceMatrix_2.py', 'matrix/distanceMatrix.py', 'matrix/process.py', 'preprocess/proteinArray.py', 'makeArray.py', 'makeDnaArray.py']
+recent_files = ['matrix/contactMatrixByResType.py', 'matrix/distanceMatrixBySeq.py']
 
 [main]
 version = 0.2.0

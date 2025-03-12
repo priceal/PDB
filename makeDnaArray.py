@@ -4,15 +4,17 @@
 Created on Fri Dec  6 07:59:14 2024
 
 @author: allen
+
+Preprocessing of mmCIF file to extract DNA chains and store coordinate
+data in array format designed for easy use in structure analysis.
+
 """
 from Bio.PDB import MMCIFParser
 import os
 import numpy as  np
 
 structureDirectory = '/home/allen/projects/DATA/db/assemblies'
-structureFile = '1b72-assembly1.cif'
-code = '1b72'
-
+structureFile = '1qrv-assembly1.cif'
 outputDirectory = 'data'
 
 ###############################################################################
@@ -20,6 +22,9 @@ outputDirectory = 'data'
 # the sequence determined is from the residues present in the structure
 # the seq of crystallized protein can be gotten from:
 #_entity_poly.pdbx_seq_one_letter_code_can 
+
+# assume pdb id code given by first 4 characters of file name
+code = structureFile[:4]
 
 parser = MMCIFParser(QUIET=True)
 structure = parser.get_structure(code,os.path.join(structureDirectory,structureFile))
@@ -47,8 +52,7 @@ for chainid in chains:   # loop through all chains in model 0
     print('processing structure chain', chainid)
     xyzPhosphate=[]; xyzRibose=[]; xyzBase=[]; seq=[]
     for residue in model[chainid]:
-        if residue.get_resname() not in dnaResidues: continue # skip if not DNA
-        print(residue.get_resname())        
+        if residue.get_resname() not in dnaResidues: continue # skip if not DNA       
         phArray=np.ones((3,3))*np.nan
         rbArray=np.ones((8,3))*np.nan
         baArray=np.ones((20,3))*np.nan

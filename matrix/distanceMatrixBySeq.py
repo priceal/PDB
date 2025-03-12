@@ -2,8 +2,9 @@
 """
 Spyder Editor
 
-Calculates and plots as a heat map the distance matrix for two structures.
-input files must be .npz files, with keys that match those in inputs below.
+Calculates and plots as a heat map the distance matrix for two sets of
+structures. input files must be .npz files, with keys that match those in 
+inputs below.
 
 coordinate arrays must have shape (N,maxResSize,3) where N is number of 
 residues, maxResSize is number of atoms/res. Therefore, indices indicate 
@@ -14,33 +15,62 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-# input structure files, format of dictionary entries:
-# label: [ file, group (set) ]
-# keys:   proteins:   bb = backbone, sc = sidechain
-#         dna:        ph = phosphate, rb = ribose, ba = base
-# label is used in labeling axes 
-inputStructures = { 'A':  ['1b72_A.npz', {'sc'}],
-                    'D':  ['1b72_D.npz', {'ba'}]
+'''
+structure file information --- format of dictionary entries:
+    label : [ [files], {groups} ]
+
+label = used to label axes
+[files] = list of .npz files for this set of structure
+{groups} = set of subgroups of atoms to consider
+allowed groups ...
+           proteins:   bb = backbone, sc = sidechain
+           dna:        ph = phosphate, rb = ribose, ba = base
+
+N.B. all .npz files under same label MUST have structure arrays of same shape!           
+'''
+
+'''
+inputStructures = { 'protein':  [ ['1mtl_A.npz','1mtl_B.npz'],    \
+                                 {'sc'} ],
+                    'dna':      [ ['1mtl_C.npz','1mtl_D.npz'],    \
+                                 {'ba'} ]
                   }
-# optional structure file directory, can leave undefined '' or '.'
+'''
+inputStructures = { 'protein':  [ ['1mtl_A.npz'],    \
+                                 {'sc'} ],
+                    'dna':      [ ['1mtl_C.npz'],    \
+                                 {'ba'} ]
+                  }
+
+
+
+    # optional structure file directory, can leave undefined '' or '.'
 fileDirectory = 'data'
 
-cutoff = 7  # non-zero for a contact map with cutoff value
-mapTitle = 'contact map'
+cutoff = 0  # non-zero for a contact map with cutoff value
+mapTitle = 'sidechain-base contacts'
 colorMap = 'OrRd'
-logorithmic = False
+logorithmic = True
 
 ###############################################################################
 ###############################################################################
-# load and parse structure files. store in dictionary
+# load and parse structure files. store in dictionary 'structure'
 structure = {}
-for k,(file,group) in inputStructures.items():
-    if fileDirectory: file=os.path.join(fileDirectory,file)
-    tempStructure = np.load(file)
-    coords = []
-    for g in group:
-        coords.append(tempStructure[g])
-    structure[k] = np.concatenate(coords,axis=1)
+for k,(files,group) in inputStructures.items():
+    
+    listCoords = []  # to receive all coords from list of files
+    for f in files:   
+        if fileDirectory:                   # use directory if given
+            f=os.path.join(fileDirectory,f) 
+        tempStructure=np.load(f)    
+        coords = []  # to receive coords from groups from one file
+        for g in group:
+            coords.append(tempStructure[g])
+            
+        # concatenate along residue atom number axis (1) and append
+        listCoords.append(np.concatenate(coords,axis=1))
+            
+    structure[k] = np.concatenate(listCoords,axis=0)
 
 '''
 first calculate the distance map. use broadcasting to calculate map efficiently. 

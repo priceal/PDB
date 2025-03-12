@@ -19,20 +19,24 @@ import matplotlib.pyplot as plt
 # keys:   proteins:   bb = backbone, sc = sidechain
 #         dna:        ph = phosphate, rb = ribose, ba = base
 # label is used in labeling axes 
-inputStructures = { 'A':  ['1b72_A.npz', {'sc'}],
-                    'D':  ['1b72_D.npz', {'ba'}]
+inputStructures = { 'chain A':  ['1qrv_A.npz', {'sc'}],
+                    'chain C':  ['1qrv_C.npz', {'ba'}]
                   }
 # optional structure file directory, can leave undefined '' or '.'
 fileDirectory = 'data'
 
-cutoff = 7  # non-zero for a contact map with cutoff value
-mapTitle = 'contact map'
+cutoff = 7  # required for contact map
+mapTitle = 'contact map by residue type: sidechain-base'
 colorMap = 'OrRd'
 
 ###############################################################################
 ###############################################################################
+dnaResidues = 'ACGT'
+proteinResidues = "ARNDCEQGHILKMFPSTWYV"
+
+
 # load and parse structure files. store in dictionary
-structure = {}; sequence = {}
+structure = {}; sequence = {}; polymerType = {}
 for k,(file,group) in inputStructures.items():
     if fileDirectory: file=os.path.join(fileDirectory,file)
     tempStructure = np.load(file)
@@ -41,6 +45,10 @@ for k,(file,group) in inputStructures.items():
         coords.append(tempStructure[g])
     structure[k] = np.concatenate(coords,axis=1)
     sequence[k] = tempStructure['seq']
+    if group&{'sc','bb'}:
+        polymerType[k] = 'protein'
+    elif group&{'ph','rb','ba'}:
+        polymerType[k] = 'dna'
 
 '''
 first calculate the distance map. use broadcasting to calculate map efficiently. 
@@ -70,22 +78,23 @@ vDM = structure1[          :, np.newaxis,           :, np.newaxis, : ] - \
 # the contact matrix CM: shape = (N1,N2)
 aDM = np.sqrt( (vDM*vDM).sum( axis = 4 ) )  # 4 is axis of coordinates (xyz)
 DM = np.nanmin( aDM, axis=(2,3))    # (2,3) are axes of atom # w/in residues
-CM = np.less(DM,cutoff)
+CM = np.less(DM,cutoff)             # applies cutoff
 
-
-# calculate sequence matrix, and perform similarity transform on sequence
-# based contact map to aa-type based map
-label2, seq2 = sequence.popitem() # pull out coordinates LIFO
+# perform "similarity" transform on sequence based contact map to 
+# generate the residue type based map
+label2, seq2 = sequence.popitem() # pull out sequences LIFO
 label1, seq1 = sequence.popitem()
-aaCM = np.linalg.multi_dot([seq1.T,CM,seq2])
+resCM = np.linalg.multi_dot([seq1.T,CM,seq2])
 
 # create amninoacid sequence map
-heatMapDict = {'variable': aaCM,
+heatMapDict = {'variable':resCM,
                'title': mapTitle,
                'xlabel': label2,
                'ylabel': label1,
                'colormap': colorMap
               }
+
+
         
 ###############################################################################
 fig,ax=plt.subplots()
@@ -94,6 +103,12 @@ ax.set_xlabel( heatMapDict['xlabel'] )
 ax.set_ylabel( heatMapDict['ylabel'] )
 ax.xaxis.set_label_position("top")
 ax.tick_params(top=True, labeltop=True, bottom=False, labelbottom=False)
+
+ax.set_xticks(range(4))  
+ax.set_yticks(range(20))  
+ax.set_xticklabels(dnaResidues)
+ax.set_yticklabels(proteinResidues)
+
 if heatMapDict['title']:
     ax.set_title( heatMapDict['title'] )
 else:

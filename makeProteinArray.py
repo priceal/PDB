@@ -4,6 +4,10 @@
 Created on Fri Dec  6 07:59:14 2024
 
 @author: allen
+
+Preprocessing of mmCIF file to extract protein chains and store coordinate
+data in array format designed for easy use in structure analysis.
+
 """
 from Bio.PDB import MMCIFParser, is_aa
 from Bio.SeqUtils import seq1
@@ -11,9 +15,7 @@ import os
 import numpy as  np
 
 structureDirectory = '/home/allen/projects/DATA/db/assemblies'
-structureFile = '1b72-assembly1.cif'
-code = '1b72'
-
+structureFile = '1qrv-assembly1.cif'
 outputDirectory = 'data'
 
 ###############################################################################
@@ -21,6 +23,9 @@ outputDirectory = 'data'
 # the sequence determined is from the residues present in the structure
 # the seq of crystallized protein can be gotten from:
 #_entity_poly.pdbx_seq_one_letter_code_can 
+
+# assume pdb id code given by first 4 characters of file name
+code = structureFile[:4]
 
 parser = MMCIFParser(QUIET=True)
 structure = parser.get_structure(code,os.path.join(structureDirectory,structureFile))
