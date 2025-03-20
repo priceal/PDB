@@ -62,52 +62,32 @@ def plotCAP( caList, phList ):
 
 if __name__ == "__main__":
     
-    structureDirectory = '../DATA/db/assemblies'
-    pdbCodeFile = '../db/pdbListAll.csv'       # file containing pdb ids
-    maxNumber = 20   # limit to first maxNumber ids   
-    sortedFile = 'sorted.csv'   # leave ''  if you do not want to save                  
+    sortedFile = 'testSort.csv'   # leave ''  if you do not want to save                  
 
     ###########################################################################
-    # load in pdb ids, use below if csv file with one column labeled 'pdbid'
-    if os.path.splitext(pdbCodeFile)[-1] == '.csv':  
-        df = pd.read_csv(pdbCodeFile)
-        pdbCodes=list(df['pdbid'])
-    else:    # or this if a simple whitespace separated list of ids
-        with open(pdbCodeFile) as f:
-            fileRead=f.read()
-        pdbCodes = fileRead.strip().split()
-        
-    pdbCodes = pdbCodes[:maxNumber]   # limit the number
-    
-    # create list of files paths
-    dirList = os.listdir(structureDirectory)
-    fileList=[ p for p in dirList if p[:4] in pdbCodes]
-    pdbids = [ f[:4] for f in fileList]
-    pathList = [ os.path.join(structureDirectory,f) for f in fileList ]
-    
-    dataDf = pd.DataFrame({'pdbid':pdbids, 
-                           'path':pathList, 
-                           'sort':['u']*len(pdbids)}
-                          )
+
+    dataDf = pd.read_csv( sortedFile )
     parser = MMCIFParser(QUIET=True)
     for i in dataDf.index:
         
         structure = parser.get_structure('structure', dataDf.at[i,'path'] )
         
         # list number of models, and number of chains in model 0
-        print(dataDf.at[i,'pdbid'],'-',len(structure),'model(s)')
+        print('\n')
+        print(dataDf.at[i,'pdbid'],'-',len(structure),'model(s)', end='\n\t\t')
         chains = []
         model = structure[0]
         for chain in model:
             chains.append( chain.get_id() )
-        print(len(model),'chain(s) in model 0:',chains)
+        print(len(model),'chain(s) in model 0:',chains, end='\n\t\t' )
         cas, phs = extractCAP( model )
         plotCAP(cas,phs)
         plt.show(block=True)
-        selection=input( 'select:  [s]ave  [d]iscard  [f]or latter review  :')
-        if selection:
+        selection=input( '[s]ave, [d]iscard, [f]or latter review, or [E]xit: ')
+        if selection:   #skip if no letter is input
+            if selection=='E':   # break on 'E'xit
+                break
             dataDf.at[i,'sort']=selection
         
     if sortedFile:
         dataDf.to_csv(sortedFile)
-        
