@@ -14,9 +14,9 @@ import os
 import pandas as pd
 
 structureDirectory = '../DATA/db/assemblies'
-pdbCodeFile = '../db/pdbListAll.csv'       # file containing pdb ids
-maxNumber = 100   # limit to first maxNumber ids   
-sortedFile = 'testSort.csv'   # leave ''  if you do not want to save                  
+pdbCodeFile = '../db/filtered.csv'       # file containing pdb ids
+maxNumber = 1000   # limit to first maxNumber ids   
+sortedFile = 'filteredSort_20250324.csv'   # leave ''  if you do not want to save                  
 
 ###########################################################################
 # load in pdb ids, use below if csv file with one column labeled 'pdbid'
@@ -29,6 +29,7 @@ else:    # or this if a simple whitespace separated list of ids
     pdbCodes = fileRead.strip().split()
     
 pdbCodes = pdbCodes[:maxNumber]   # limit the number
+pdbCodes = [p.lower() for p in pdbCodes]
 
 # create list of files paths
 dirList = os.listdir(structureDirectory)

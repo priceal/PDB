@@ -62,7 +62,7 @@ def plotCAP( caList, phList ):
 
 if __name__ == "__main__":
     
-    sortedFile = 'testSort.csv'   # leave ''  if you do not want to save                  
+    sortedFile = 'filteredSort_20250324.csv'   # leave ''  if you do not want to save                  
 
     ###########################################################################
 
