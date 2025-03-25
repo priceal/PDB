@@ -24,7 +24,7 @@ riboseAtoms = { "C1\'", "C2\'", "C3\'", "C4\'", "C5\'", "O3\'", "O4\'", "O5\'"}
 baseAtoms = { 'N1', 'C2', 'N3', 'C4', 'C5', 'C6', 'N7', 'C8', 'N9', 'N2', \
              'O6', 'N6' }
 dnaResidues = {'DA', 'DC','DG', 'DT'}
-
+backboneAtoms={'N','CA','O','OXT'} # for now, do not include CA (for glycine)
 
 
 def extractDnaStructure( chain ):
@@ -54,14 +54,40 @@ def extractDnaStructure( chain ):
         xyzRibose.append(rbArray)
         xyzBase.append(baArray)
         seq.append(residue.get_resname()[1:])
+        
+        
+    
+def extractProteinStructure( chain ):
+    
+    xyzBackbone=[]; xyzSidechain=[]; seq=[]
+    for residue in chain:
+        if not is_aa(residue):   # skip if not aa residue
+            continue
+        
+        # arrays to receive substructure coords
+        bbArray=np.ones((4,3))*np.nan; scArray=np.ones((11,3))*np.nan
+        bb=[]; sc=[] # lists for substructures
+        for atom in residue:
+            if atom.get_name() in backboneAtoms: bb.append(atom.get_coord())
+            else: sc.append(atom.get_coord())
                 
-
-    
-    
-def extractProteinStructure():
-    
-
-
+        # fill arrays with coordinate lists
+        bbArray[:len(bb)] = bb; scArray[:len(sc)] = sc
+        
+        # add arrays to chain lists
+        xyzBackbone.append(bbArray); xyzSidechain.append(scArray)
+        seq.append(residue.get_resname())
+        
+    if xyzBackbone and xyzSidechain:   # only add to dict if an list is non-empty
+        backboneDict[chainid] = np.array(xyzBackbone)
+        sidechainDict[chainid] = np.array(xyzSidechain)
+        print('    added protein structure', end=', ')
+        
+    if seq:
+        sequenceDict[chainid] = seq1(''.join(seq))
+        print('    added protein sequence')
+        
+print('completed processing all chains')
 
 
 
@@ -96,6 +122,10 @@ print(len(model),'chain(s) in model 0:',chains)
 phosphateDict = {}; riboseDict={}; baseDict = {}
 sequenceDict = {}
 
+
+# create the protein structure and sequence arrays
+# each entry in the dictionary will be a structure/sequence for a chain
+backboneDict = {}; sidechainDict={}; sequenceDict = {}
 
 for chainid in chains:   # loop through all chains in model 0
     print('processing structure chain', chainid)
