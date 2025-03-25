@@ -6,14 +6,14 @@ protein - DNA interactions.
 makeProteinArray.py
 ###############################################################################
 
-Preprocessing of mmCIF file to extract protein chains and store coordinate
+Preprocessing of single mmCIF file to extract protein chains and store coordinate
 data in array format designed for easy use in structure analysis.
 
 ###############################################################################
 makeDnaArray.py
 ###############################################################################
 
-Preprocessing of mmCIF file to extract DNA chains and store coordinate
+Preprocessing of singe mmCIF file to extract DNA chains and store coordinate
 data in array format designed for easy use in structure analysis.
 
 ###############################################################################

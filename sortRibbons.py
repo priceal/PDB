@@ -45,6 +45,7 @@ def plotCAP( caList, phList ):
     
     fig=plt.figure(figsize=(10,10))
     ax=fig.add_subplot(projection='3d')
+    ax.set_aspect('equal')
     for ca in caList:
         ca=ca.T
         ax.plot3D(ca[0],ca[1],ca[2],'-')
@@ -70,24 +71,25 @@ if __name__ == "__main__":
     parser = MMCIFParser(QUIET=True)
     for i in dataDf.index:
         
-        structure = parser.get_structure('structure', dataDf.at[i,'path'] )
-        
-        # list number of models, and number of chains in model 0
-        print('\n')
-        print(dataDf.at[i,'pdbid'],'-',len(structure),'model(s)', end='\n\t\t')
-        chains = []
-        model = structure[0]
-        for chain in model:
-            chains.append( chain.get_id() )
-        print(len(model),'chain(s) in model 0:',chains, end='\n\t\t' )
-        cas, phs = extractCAP( model )
-        plotCAP(cas,phs)
-        plt.show(block=True)
-        selection=input( '[s]ave, [d]iscard, [f]or latter review, or [E]xit: ')
-        if selection:   #skip if no letter is input
-            if selection=='E':   # break on 'E'xit
-                break
-            dataDf.at[i,'sort']=selection
+        if dataDf.at[i,'sort'] == 'u': # only sort if unsorted
+            structure = parser.get_structure('structure', dataDf.at[i,'path'] )
+            
+            # list number of models, and number of chains in model 0
+            print(f'{i}/{len(dataDf)}')
+            print(dataDf.at[i,'pdbid'],'-',len(structure),'model(s)', end='\n\t\t')
+            chains = []
+            model = structure[0]
+            for chain in model:
+                chains.append( chain.get_id() )
+            print(len(model),'chain(s) in model 0:',chains, end='\n\t\t' )
+            cas, phs = extractCAP( model )
+            plotCAP(cas,phs)
+            plt.show(block=True)
+            selection=input( '[s]ave, [d]iscard, [f]or latter review, or [E]xit: ')
+            if selection:   #skip if no letter is input
+                if selection=='E':   # break on 'E'xit
+                    break
+                dataDf.at[i,'sort']=selection
         
     if sortedFile:
         dataDf.to_csv(sortedFile)
