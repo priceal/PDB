@@ -11,13 +11,12 @@ data in array format designed for easy use in structure analysis.
 """
 import os
 import numpy as  np
-import pandas as pd
 from Bio.PDB import MMCIFParser, is_aa
 from Bio.SeqUtils import seq1
 
-#structureDirectory = '/home/allen/projects/DATA/db/assemblies'
-structureListFile = 'testSort.csv'
-outputDirectory = 'dataTest'
+structureDirectory = '/home/allen/projects/DATA/db/assemblies'
+structureFile = '1a36-assembly1.cif'
+outputDirectory = 'data2'
 logFile = 'mSA.log'
 
 
@@ -149,8 +148,7 @@ def extractProteinStructure( chain ):
     
     xyzBackbone=[]; xyzSidechain=[]; seq=[]
     for residue in chain:
-        if not seq1(residue.get_resname()): continue # skip if empty
-        if seq1(residue.get_resname()) not in aminoAcids: continue # skip non-AA 
+        if not is_aa(residue): continue   # skip if not aa residue
              
         #######################################################################
         # arrays to receive substructure coords
@@ -161,11 +159,7 @@ def extractProteinStructure( chain ):
             else: sc.append(atom.get_coord())
                 
         # fill arrays with coordinate lists
-        try:
-            bbArray[:len(bb)] = bb
-            scArray[:len(sc)] = sc
-        except:
-            print(chain,residue,residue.get_resname())
+        bbArray[:len(bb)] = bb; scArray[:len(sc)] = sc
         #######################################################################
 
         #######################################################################
@@ -193,58 +187,49 @@ def extractProteinStructure( chain ):
 #_entity_poly.pdbx_seq_one_letter_code_can 
 
 logOut = open(logFile,'w')
-structureDf = pd.read_csv( structureListFile )
-logOut.write(f'structure list loaded: {structureListFile}\n')
-
+'''
+1. load and parse the mmCIF file into a biopython structure object
+'''
+# assume pdb id code given by first 4 characters of file name
+code = structureFile[:4]
 parser = MMCIFParser(QUIET=True)
-for index in structureDf.index:
-    code = structureDf.at[index,'pdbid']
-    path = structureDf.at[index,'path']
-    print(code,end=' ')
+structure = parser.get_structure(code,os.path.join(structureDirectory,structureFile))
 
-    '''
-    1. load and parse the mmCIF file into a biopython structure object
-    '''
-    # assume pdb id code given by first 4 characters of file name
+# for log file
+# list number of models, and number of chains in model 0
+logOut.write(f'{code}: {len(structure)} model(s). ')
+chains = []
+model = structure[0]
+logOut.write(\
+   f'{len(model)} chain(s) in model 0: {tuple(model.child_dict.keys())} \n')
+
+'''
+2. setup dictionaries for protein and dna data / make data directory if needed
+'''
+# create the structure and sequence arrays
+# each entry in the dictionary will be a structure/sequence for a chain
+phosphateDict = {}; riboseDict={}; baseDict = {}; dnaSequenceDict = {}
+backboneDict = {}; sidechainDict={}; proteinSequenceDict = {}
+os.makedirs(outputDirectory,exist_ok=True)
+
+'''
+3. loop through all chains and send to correct extractor
+'''
+for chain in model:   # loop through all chains in model 0
+    logOut.write(f'processing chain {chain.id} ')
+    filePath = os.path.join(outputDirectory,code+'_'+chain.id)
     
-    structure = parser.get_structure(code,path)
-    
-    # for log file
-    # list number of models, and number of chains in model 0
-    logOut.write(f'\nfile: {path} \n')
-    logOut.write(f'{code}: {len(structure)} model(s). ')
-    chains = []
-    model = structure[0]
-    logOut.write(\
-       f'{len(model)} chain(s) in model 0: {tuple(model.child_dict.keys())} \n')
-    
-    '''
-    2. setup dictionaries for protein and dna data / make data directory if needed
-    '''
-    # create the structure and sequence arrays
-    # each entry in the dictionary will be a structure/sequence for a chain
-    phosphateDict = {}; riboseDict={}; baseDict = {}; dnaSequenceDict = {}
-    backboneDict = {}; sidechainDict={}; proteinSequenceDict = {}
-    os.makedirs(outputDirectory,exist_ok=True)
-    
-    '''
-    3. loop through all chains and send to correct extractor
-    '''
-    for chain in model:   # loop through all chains in model 0
-        logOut.write(f'processing chain {chain.id} ')
-        filePath = os.path.join(outputDirectory,code+'_'+chain.id)
+    if is_dna( chain ):   
+        phosphate, ribose, base, seq = extractDnaStructure( chain )
+        logOut.write('dna     ')
         
-        if is_dna( chain ):   
-            phosphate, ribose, base, seq = extractDnaStructure( chain )
-            logOut.write('dna     ')
-            
-            np.savez(filePath,seq=seq, ph=phosphate, rb=ribose, ba=base )
-            logOut.write(f': {filePath}.npz\n')
-                               
-        elif is_protein( chain ):
-            backbone, sidechain, seq = extractProteinStructure( chain )  
-            logOut.write('protein ')
-            np.savez(filePath,seq=seq,bb=backbone,sc=sidechain)
-            logOut.write(f': {filePath}.npz\n')
+        np.savez(filePath,seq=seq, ph=phosphate, rb=ribose, ba=base )
+        logOut.write(f': {filePath}.npz\n')
+                           
+    elif is_protein( chain ):
+        backbone, sidechain, seq = extractProteinStructure( chain )  
+        logOut.write('protein ')
+        np.savez(filePath,seq=seq,bb=backbone,sc=sidechain)
+        logOut.write(f': {filePath}.npz\n')
         
 logOut.close()

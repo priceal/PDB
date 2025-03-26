@@ -16,7 +16,7 @@ import pandas as pd
 structureDirectory = '../DATA/db/assemblies'
 pdbCodeFile = '../db/filtered.csv'       # file containing pdb ids
 maxNumber = 1000   # limit to first maxNumber ids   
-sortedFile = 'filteredSort_20250324.csv'   # leave ''  if you do not want to save                  
+sortedFile = 'temp.csv'   # leave ''  if you do not want to save                  
 
 ###########################################################################
 # load in pdb ids, use below if csv file with one column labeled 'pdbid'

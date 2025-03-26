@@ -1,0 +1,123 @@
+structure list loaded: testSort.csv
+
+file: ../DATA/db/assemblies/1a1g-assembly1.cif 
+1a1g: 1 model(s). 3 chain(s) in model 0: ('B', 'C', 'A') 
+processing chain B dna     : dataTest/1a1g_B.npz
+processing chain C dna     : dataTest/1a1g_C.npz
+processing chain A protein : dataTest/1a1g_A.npz
+
+file: ../DATA/db/assemblies/1a1j-assembly1.cif 
+1a1j: 1 model(s). 3 chain(s) in model 0: ('B', 'C', 'A') 
+processing chain B dna     : dataTest/1a1j_B.npz
+processing chain C dna     : dataTest/1a1j_C.npz
+processing chain A protein : dataTest/1a1j_A.npz
+
+file: ../DATA/db/assemblies/1a02-assembly1.cif 
+1a02: 1 model(s). 5 chain(s) in model 0: ('A', 'B', 'N', 'F', 'J') 
+processing chain A dna     : dataTest/1a02_A.npz
+processing chain B dna     : dataTest/1a02_B.npz
+processing chain N protein : dataTest/1a02_N.npz
+processing chain F protein : dataTest/1a02_F.npz
+processing chain J protein : dataTest/1a02_J.npz
+
+file: ../DATA/db/assemblies/10mh-assembly1.cif 
+10mh: 1 model(s). 3 chain(s) in model 0: ('B', 'C', 'A') 
+processing chain B dna     : dataTest/10mh_B.npz
+processing chain C dna     : dataTest/10mh_C.npz
+processing chain A protein : dataTest/10mh_A.npz
+
+file: ../DATA/db/assemblies/1a66-assembly1.cif 
+1a66: 1 model(s). 3 chain(s) in model 0: ('B', 'C', 'A') 
+processing chain B dna     : dataTest/1a66_B.npz
+processing chain C dna     : dataTest/1a66_C.npz
+processing chain A protein : dataTest/1a66_A.npz
+
+file: ../DATA/db/assemblies/1a0a-assembly1.cif 
+1a0a: 1 model(s). 4 chain(s) in model 0: ('C', 'D', 'A', 'B') 
+processing chain C dna     : dataTest/1a0a_C.npz
+processing chain D dna     : dataTest/1a0a_D.npz
+processing chain A protein : dataTest/1a0a_A.npz
+processing chain B protein : dataTest/1a0a_B.npz
+
+file: ../DATA/db/assemblies/1a1k-assembly1.cif 
+1a1k: 1 model(s). 3 chain(s) in model 0: ('B', 'C', 'A') 
+processing chain B dna     : dataTest/1a1k_B.npz
+processing chain C dna     : dataTest/1a1k_C.npz
+processing chain A protein : dataTest/1a1k_A.npz
+
+file: ../DATA/db/assemblies/1a1v-assembly1.cif 
+1a1v: 1 model(s). 2 chain(s) in model 0: ('B', 'A') 
+processing chain B processing chain A protein : dataTest/1a1v_A.npz
+
+file: ../DATA/db/assemblies/1a31-assembly1.cif 
+1a31: 1 model(s). 3 chain(s) in model 0: ('C', 'D', 'A') 
+processing chain C dna     : dataTest/1a31_C.npz
+processing chain D dna     : dataTest/1a31_D.npz
+processing chain A protein : dataTest/1a31_A.npz
+
+file: ../DATA/db/assemblies/1a6b-assembly1.cif 
+1a6b: 1 model(s). 2 chain(s) in model 0: ('A', 'B') 
+processing chain A dna     : dataTest/1a6b_A.npz
+processing chain B protein : dataTest/1a6b_B.npz
+
+file: ../DATA/db/assemblies/173d-assembly1.cif 
+173d: 1 model(s). 4 chain(s) in model 0: ('B', 'D', 'B-2', 'D-2') 
+processing chain B dna     : dataTest/173d_B.npz
+processing chain D protein : dataTest/173d_D.npz
+processing chain B-2 dna     : dataTest/173d_B-2.npz
+processing chain D-2 protein : dataTest/173d_D-2.npz
+
+file: ../DATA/db/assemblies/1a1i-assembly1.cif 
+1a1i: 1 model(s). 3 chain(s) in model 0: ('B', 'C', 'A') 
+processing chain B dna     : dataTest/1a1i_B.npz
+processing chain C dna     : dataTest/1a1i_C.npz
+processing chain A protein : dataTest/1a1i_A.npz
+
+file: ../DATA/db/assemblies/1a1f-assembly1.cif 
+1a1f: 1 model(s). 3 chain(s) in model 0: ('B', 'C', 'A') 
+processing chain B dna     : dataTest/1a1f_B.npz
+processing chain C dna     : dataTest/1a1f_C.npz
+processing chain A protein : dataTest/1a1f_A.npz
+
+file: ../DATA/db/assemblies/1a1h-assembly1.cif 
+1a1h: 1 model(s). 3 chain(s) in model 0: ('B', 'C', 'A') 
+processing chain B dna     : dataTest/1a1h_B.npz
+processing chain C dna     : dataTest/1a1h_C.npz
+processing chain A protein : dataTest/1a1h_A.npz
+
+file: ../DATA/db/assemblies/193d-assembly1.cif 
+193d: 1 model(s). 3 chain(s) in model 0: ('A', 'B', 'C') 
+processing chain A dna     : dataTest/193d_A.npz
+processing chain B dna     : dataTest/193d_B.npz
+processing chain C protein : dataTest/193d_C.npz
+
+file: ../DATA/db/assemblies/1a1l-assembly1.cif 
+1a1l: 1 model(s). 3 chain(s) in model 0: ('B', 'C', 'A') 
+processing chain B dna     : dataTest/1a1l_B.npz
+processing chain C dna     : dataTest/1a1l_C.npz
+processing chain A protein : dataTest/1a1l_A.npz
+
+file: ../DATA/db/assemblies/1a36-assembly1.cif 
+1a36: 1 model(s). 3 chain(s) in model 0: ('B', 'C', 'A') 
+processing chain B dna     : dataTest/1a36_B.npz
+processing chain C dna     : dataTest/1a36_C.npz
+processing chain A protein : dataTest/1a36_A.npz
+
+file: ../DATA/db/assemblies/185d-assembly1.cif 
+185d: 1 model(s). 3 chain(s) in model 0: ('A', 'C', 'D') 
+processing chain A protein : dataTest/185d_A.npz
+processing chain C dna     : dataTest/185d_C.npz
+processing chain D dna     : dataTest/185d_D.npz
+
+file: ../DATA/db/assemblies/1a3q-assembly1.cif 
+1a3q: 1 model(s). 4 chain(s) in model 0: ('C', 'D', 'A', 'B') 
+processing chain C dna     : dataTest/1a3q_C.npz
+processing chain D dna     : dataTest/1a3q_D.npz
+processing chain A protein : dataTest/1a3q_A.npz
+processing chain B protein : dataTest/1a3q_B.npz
+
+file: ../DATA/db/assemblies/1a35-assembly1.cif 
+1a35: 1 model(s). 3 chain(s) in model 0: ('C', 'D', 'A') 
+processing chain C dna     : dataTest/1a35_C.npz
+processing chain D dna     : dataTest/1a35_D.npz
+processing chain A protein : dataTest/1a35_A.npz
