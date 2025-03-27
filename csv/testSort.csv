@@ -1,0 +1,21 @@
+pdbid,path,sort,dna chains,protein chains
+1a1g,../DATA/db/assemblies/1a1g-assembly1.cif,s,"B,C",A
+1a1j,../DATA/db/assemblies/1a1j-assembly1.cif,s,"B,C",A
+1a02,../DATA/db/assemblies/1a02-assembly1.cif,s,"A,B","N,F,J"
+10mh,../DATA/db/assemblies/10mh-assembly1.cif,s,"B,C",A
+1a66,../DATA/db/assemblies/1a66-assembly1.cif,s,"B,C",A
+1a0a,../DATA/db/assemblies/1a0a-assembly1.cif,s,"C,D","A,B"
+1a1k,../DATA/db/assemblies/1a1k-assembly1.cif,s,"B,C",A
+1a1v,../DATA/db/assemblies/1a1v-assembly1.cif,d,,A
+1a31,../DATA/db/assemblies/1a31-assembly1.cif,f,"C,D",A
+1a6b,../DATA/db/assemblies/1a6b-assembly1.cif,d,A,B
+173d,../DATA/db/assemblies/173d-assembly1.cif,d,"B,B-2",
+1a1i,../DATA/db/assemblies/1a1i-assembly1.cif,u,"B,C",A
+1a1f,../DATA/db/assemblies/1a1f-assembly1.cif,u,"B,C",A
+1a1h,../DATA/db/assemblies/1a1h-assembly1.cif,u,"B,C",A
+193d,../DATA/db/assemblies/193d-assembly1.cif,u,"A,B",
+1a1l,../DATA/db/assemblies/1a1l-assembly1.cif,u,"B,C",A
+1a36,../DATA/db/assemblies/1a36-assembly1.cif,u,"B,C",A
+185d,../DATA/db/assemblies/185d-assembly1.cif,u,"C,D",
+1a3q,../DATA/db/assemblies/1a3q-assembly1.cif,u,"C,D","A,B"
+1a35,../DATA/db/assemblies/1a35-assembly1.cif,u,"C,D",A

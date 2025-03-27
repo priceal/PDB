@@ -5,8 +5,8 @@ Created on Fri Dec  6 07:59:14 2024
 
 @author: allen
 
-Preprocessing of mmCIF file to extract DNA chains and store coordinate
-data in array format designed for easy use in structure analysis.
+Preprocessing of mmCIF files to extract protein/DNA chains and store 
+coordinate data in array format designed for easy use in structure analysis.
 
 """
 import os
@@ -15,19 +15,14 @@ import pandas as pd
 from Bio.PDB import MMCIFParser, is_aa
 from Bio.SeqUtils import seq1
 
-#structureDirectory = '/home/allen/projects/DATA/db/assemblies'
-structureListFile = 'testSort.csv'
-outputDirectory = 'dataTest'
-logFile = 'mSA.log'
-
-
 '''
 ###############################################################################
-########################  FUNCTIONS  ######################################
+########################   FUNCTIONS   ########################################
 ###############################################################################
 '''
 
 # variable definitions
+unexceptedAtoms = { 'H', 'ZN' }
 phosphateAtoms = { 'P', 'OP1', 'OP2', 'OP3' }
 riboseAtoms = { "C1\'", "C2\'", "C3\'", "C4\'", "C5\'", "O3\'", "O4\'", "O5\'"}
 baseAtoms = { 'N1', 'C2', 'N3', 'C4', 'C5', 'C6', 'N7', 'C8', 'N9', 'N2', \
@@ -40,10 +35,10 @@ aminoAcids = "ARNDCEQGHILKMFPSTWYV"
 ###############################################################################
 def is_dna( chain ):
     '''
-    
+    determines if at least 2 residues in chain are canonical DNA residue types
 
     Args:
-        seq (TYPE): DESCRIPTION.
+        chain (TYPE): DESCRIPTION.
 
     Returns:
         bool: DESCRIPTION.
@@ -59,10 +54,10 @@ def is_dna( chain ):
 ###############################################################################
 def is_protein( chain ):
     '''
-    
+    determines if at least 5 residues in chain are canonical AA residue types 
 
     Args:
-        seq (TYPE): DESCRIPTION.
+        chain (TYPE): DESCRIPTION.
 
     Returns:
         bool: DESCRIPTION.
@@ -77,7 +72,7 @@ def is_protein( chain ):
 ###############################################################################
 def extractDnaStructure( chain ):
     '''
-    
+    create structure and sequence arrays from a protein chain
 
     Parameters
     ----------
@@ -101,7 +96,8 @@ def extractDnaStructure( chain ):
         baArray=np.ones((20,3))*np.nan
         ph=[]; rb=[]; ba=[]  # lists for substructure coords
         for atom in residue:
-            if atom.get_name() in phosphateAtoms: ph.append(atom.get_coord())
+            if atom.element in unexceptedAtoms: pass
+            elif atom.get_name() in phosphateAtoms: ph.append(atom.get_coord())
             elif atom.get_name() in riboseAtoms: rb.append(atom.get_coord())
             elif atom.get_name() in baseAtoms: ba.append(atom.get_coord())
             else: pass  # usually this is for H in NMR stuctures
@@ -133,7 +129,7 @@ def extractDnaStructure( chain ):
 ###############################################################################
 def extractProteinStructure( chain ):
     '''
-    
+    create structure and sequence arrays from a DNA chain   
 
     Parameters
     ----------
@@ -157,7 +153,8 @@ def extractProteinStructure( chain ):
         bbArray=np.ones((4,3))*np.nan; scArray=np.ones((11,3))*np.nan
         bb=[]; sc=[] # lists for substructures
         for atom in residue:
-            if atom.get_name() in backboneAtoms: bb.append(atom.get_coord())
+            if atom.element in unexceptedAtoms: pass
+            elif atom.get_name() in backboneAtoms: bb.append(atom.get_coord())
             else: sc.append(atom.get_coord())
                 
         # fill arrays with coordinate lists
@@ -165,7 +162,10 @@ def extractProteinStructure( chain ):
             bbArray[:len(bb)] = bb
             scArray[:len(sc)] = sc
         except:
-            print(chain,residue,residue.get_resname())
+            print(chain,residue,residue.get_resname(),end=' ')
+            for a in residue:
+                print(a.element,end=' ')
+            print('\n')
         #######################################################################
 
         #######################################################################
@@ -187,64 +187,83 @@ def extractProteinStructure( chain ):
 ########################  MAIN  ######################################
 ###############################################################################
 '''
-# N.B. MMCIFParser assigned author chainids
+
+# variables for main
+# inputs
+#structureDirectory = '/home/allen/projects/DATA/db/assemblies'
+structureListFile = './csv/sort715.csv'
+
+#outputs
+outputDirectory = '/home/allen/projects/DATA/PDB/npz'
+logFile = 'mSA_715.log'
+
+# N.B. MMCIFParser assigns author chainids
 # the sequence determined is from the residues present in the structure
 # the seq of crystallized protein can be gotten from:
 #_entity_poly.pdbx_seq_one_letter_code_can 
 
+# initialize I/O
 logOut = open(logFile,'w')
 structureDf = pd.read_csv( structureListFile )
 logOut.write(f'structure list loaded: {structureListFile}\n')
-
 parser = MMCIFParser(QUIET=True)
-for index in structureDf.index:
-    code = structureDf.at[index,'pdbid']
-    path = structureDf.at[index,'path']
-    print(code,end=' ')
+
+# main loop
+for entry in structureDf.itertuples():
+    print(entry.pdbid,end=' ')
 
     '''
     1. load and parse the mmCIF file into a biopython structure object
     '''
-    # assume pdb id code given by first 4 characters of file name
     
-    structure = parser.get_structure(code,path)
+    structure = parser.get_structure(entry.pdbid,entry.path)
     
     # for log file
     # list number of models, and number of chains in model 0
-    logOut.write(f'\nfile: {path} \n')
-    logOut.write(f'{code}: {len(structure)} model(s). ')
+    logOut.write(f'\nfile: {entry.path} \n')
+    logOut.write(f'{entry.pdbid}: {len(structure)} model(s). ')
     chains = []
     model = structure[0]
     logOut.write(\
        f'{len(model)} chain(s) in model 0: {tuple(model.child_dict.keys())} \n')
     
     '''
-    2. setup dictionaries for protein and dna data / make data directory if needed
+    2. make data directory if needed
     '''
     # create the structure and sequence arrays
     # each entry in the dictionary will be a structure/sequence for a chain
-    phosphateDict = {}; riboseDict={}; baseDict = {}; dnaSequenceDict = {}
-    backboneDict = {}; sidechainDict={}; proteinSequenceDict = {}
     os.makedirs(outputDirectory,exist_ok=True)
     
     '''
     3. loop through all chains and send to correct extractor
     '''
+    dnaChains = []
+    proteinChains = []
     for chain in model:   # loop through all chains in model 0
         logOut.write(f'processing chain {chain.id} ')
-        filePath = os.path.join(outputDirectory,code+'_'+chain.id)
+        filePath = os.path.join(outputDirectory,entry.pdbid+'_'+chain.id)
         
         if is_dna( chain ):   
             phosphate, ribose, base, seq = extractDnaStructure( chain )
             logOut.write('dna     ')
-            
             np.savez(filePath,seq=seq, ph=phosphate, rb=ribose, ba=base )
-            logOut.write(f': {filePath}.npz\n')
+            logOut.write(f': {filePath}.npz\n')           
+            dnaChains.append(chain.id)
                                
         elif is_protein( chain ):
             backbone, sidechain, seq = extractProteinStructure( chain )  
             logOut.write('protein ')
             np.savez(filePath,seq=seq,bb=backbone,sc=sidechain)
             logOut.write(f': {filePath}.npz\n')
-        
+            proteinChains.append(chain.id)
+            
+        else:
+            logOut.write('***TYPE NOT IDENTIFIED***\n')
+    
+    # add classification of chains to structureDf
+    structureDf.at[entry.Index,'dna chains'] = ','.join(dnaChains)
+    structureDf.at[entry.Index,'protein chains'] = ','.join(proteinChains)
+
+# resave new dataframe w/ updated columns listing chain classifications
+structureDf.to_csv(structureListFile,index=False)                   
 logOut.close()

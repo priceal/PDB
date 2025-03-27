@@ -1,0 +1,3 @@
+185d: 1 model(s). 3 chain(s) in model 0: ('A', 'C', 'D') 
+processing chain A processing chain C dna     : data2/185d_C.npz
+processing chain D dna     : data2/185d_D.npz

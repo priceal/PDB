@@ -47,7 +47,8 @@ processing chain A protein : dataTest/1a1k_A.npz
 
 file: ../DATA/db/assemblies/1a1v-assembly1.cif 
 1a1v: 1 model(s). 2 chain(s) in model 0: ('B', 'A') 
-processing chain B processing chain A protein : dataTest/1a1v_A.npz
+processing chain B ***TYPE NOT IDENTIFIED***
+processing chain A protein : dataTest/1a1v_A.npz
 
 file: ../DATA/db/assemblies/1a31-assembly1.cif 
 1a31: 1 model(s). 3 chain(s) in model 0: ('C', 'D', 'A') 
@@ -63,9 +64,9 @@ processing chain B protein : dataTest/1a6b_B.npz
 file: ../DATA/db/assemblies/173d-assembly1.cif 
 173d: 1 model(s). 4 chain(s) in model 0: ('B', 'D', 'B-2', 'D-2') 
 processing chain B dna     : dataTest/173d_B.npz
-processing chain D protein : dataTest/173d_D.npz
+processing chain D ***TYPE NOT IDENTIFIED***
 processing chain B-2 dna     : dataTest/173d_B-2.npz
-processing chain D-2 protein : dataTest/173d_D-2.npz
+processing chain D-2 ***TYPE NOT IDENTIFIED***
 
 file: ../DATA/db/assemblies/1a1i-assembly1.cif 
 1a1i: 1 model(s). 3 chain(s) in model 0: ('B', 'C', 'A') 
@@ -89,7 +90,7 @@ file: ../DATA/db/assemblies/193d-assembly1.cif
 193d: 1 model(s). 3 chain(s) in model 0: ('A', 'B', 'C') 
 processing chain A dna     : dataTest/193d_A.npz
 processing chain B dna     : dataTest/193d_B.npz
-processing chain C protein : dataTest/193d_C.npz
+processing chain C ***TYPE NOT IDENTIFIED***
 
 file: ../DATA/db/assemblies/1a1l-assembly1.cif 
 1a1l: 1 model(s). 3 chain(s) in model 0: ('B', 'C', 'A') 
@@ -105,7 +106,7 @@ processing chain A protein : dataTest/1a36_A.npz
 
 file: ../DATA/db/assemblies/185d-assembly1.cif 
 185d: 1 model(s). 3 chain(s) in model 0: ('A', 'C', 'D') 
-processing chain A protein : dataTest/185d_A.npz
+processing chain A ***TYPE NOT IDENTIFIED***
 processing chain C dna     : dataTest/185d_C.npz
 processing chain D dna     : dataTest/185d_D.npz
 

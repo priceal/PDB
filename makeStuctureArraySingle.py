@@ -15,9 +15,8 @@ from Bio.PDB import MMCIFParser, is_aa
 from Bio.SeqUtils import seq1
 
 structureDirectory = '/home/allen/projects/DATA/db/assemblies'
-structureFile = '1a36-assembly1.cif'
+structureFile = '185d-assembly1.cif'
 outputDirectory = 'data2'
-logFile = 'mSA.log'
 
 
 '''
@@ -27,6 +26,7 @@ logFile = 'mSA.log'
 '''
 
 # variable definitions
+unexceptedAtoms = { 'H', 'ZN' }
 phosphateAtoms = { 'P', 'OP1', 'OP2', 'OP3' }
 riboseAtoms = { "C1\'", "C2\'", "C3\'", "C4\'", "C5\'", "O3\'", "O4\'", "O5\'"}
 baseAtoms = { 'N1', 'C2', 'N3', 'C4', 'C5', 'C6', 'N7', 'C8', 'N9', 'N2', \
@@ -100,11 +100,11 @@ def extractDnaStructure( chain ):
         baArray=np.ones((20,3))*np.nan
         ph=[]; rb=[]; ba=[]  # lists for substructure coords
         for atom in residue:
-            if atom.get_name() in phosphateAtoms: ph.append(atom.get_coord())
+            if atom.element in unexceptedAtoms: pass
+            elif atom.get_name() in phosphateAtoms: ph.append(atom.get_coord())
             elif atom.get_name() in riboseAtoms: rb.append(atom.get_coord())
             elif atom.get_name() in baseAtoms: ba.append(atom.get_coord())
-            else: pass  # usually this is for H in NMR stuctures
-            # issue: non-canonical bases with specil atom types
+            else: pass  # non-canonical bases with specil atom types?
         
         # fill arrays with coordinate lists up to length of list, force
         # correct shape of array conversion of lists
@@ -155,7 +155,8 @@ def extractProteinStructure( chain ):
         bbArray=np.ones((4,3))*np.nan; scArray=np.ones((11,3))*np.nan
         bb=[]; sc=[] # lists for substructures
         for atom in residue:
-            if atom.get_name() in backboneAtoms: bb.append(atom.get_coord())
+            if atom.element in unexceptedAtoms: pass
+            elif atom.get_name() in backboneAtoms: bb.append(atom.get_coord())
             else: sc.append(atom.get_coord())
                 
         # fill arrays with coordinate lists
@@ -186,7 +187,6 @@ def extractProteinStructure( chain ):
 # the seq of crystallized protein can be gotten from:
 #_entity_poly.pdbx_seq_one_letter_code_can 
 
-logOut = open(logFile,'w')
 '''
 1. load and parse the mmCIF file into a biopython structure object
 '''
@@ -194,14 +194,15 @@ logOut = open(logFile,'w')
 code = structureFile[:4]
 parser = MMCIFParser(QUIET=True)
 structure = parser.get_structure(code,os.path.join(structureDirectory,structureFile))
+print(f'\nstructure file loaded: {os.path.join(structureDirectory,structureFile)}')
 
 # for log file
 # list number of models, and number of chains in model 0
-logOut.write(f'{code}: {len(structure)} model(s). ')
+print(f'{code}: {len(structure)} model(s). ',end='')
 chains = []
 model = structure[0]
-logOut.write(\
-   f'{len(model)} chain(s) in model 0: {tuple(model.child_dict.keys())} \n')
+print(\
+   f'{len(model)} chain(s) in model 0: {tuple(model.child_dict.keys())}')
 
 '''
 2. setup dictionaries for protein and dna data / make data directory if needed
@@ -216,20 +217,24 @@ os.makedirs(outputDirectory,exist_ok=True)
 3. loop through all chains and send to correct extractor
 '''
 for chain in model:   # loop through all chains in model 0
-    logOut.write(f'processing chain {chain.id} ')
+    print(f'\nprocessing chain {chain.id}: ', end='')
     filePath = os.path.join(outputDirectory,code+'_'+chain.id)
     
     if is_dna( chain ):   
         phosphate, ribose, base, seq = extractDnaStructure( chain )
-        logOut.write('dna     ')
+        print('dna     ', end='')
         
         np.savez(filePath,seq=seq, ph=phosphate, rb=ribose, ba=base )
-        logOut.write(f': {filePath}.npz\n')
+        print(f': {filePath}.npz')
                            
     elif is_protein( chain ):
         backbone, sidechain, seq = extractProteinStructure( chain )  
-        logOut.write('protein ')
+        print('protein ', end='')
         np.savez(filePath,seq=seq,bb=backbone,sc=sidechain)
-        logOut.write(f': {filePath}.npz\n')
+        print(f': {filePath}.npz')
         
-logOut.close()
+    else:
+        print('type not identified')
+        
+        
+        

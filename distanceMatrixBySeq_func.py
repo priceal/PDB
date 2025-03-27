@@ -12,9 +12,11 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
+'''
 ###############################################################################
 ######################### functions ###########################################
 ###############################################################################
+'''
 
 def loadStructureAndSequence( files, group, Directory='' ):
     
@@ -31,9 +33,10 @@ def loadStructureAndSequence( files, group, Directory='' ):
             
         # concatenate along residue atom number axis (1) and append
         listCoords.append(np.concatenate(coords,axis=1))
-            
+        listSeq.append(tempStructure['seq']) 
+        
     return np.concatenate(listCoords,axis=0), \
-           listSeq.append(tempStructure['seq']) 
+           np.concatenate(listSeq,axis=0)
            
 ###############################################################################
 
@@ -96,9 +99,11 @@ def displayHeatMap( heatMapDict, xticks='', yticks='' ):
     ax.imshow( heatMapDict['variable'], cmap=heatMapDict['colormap'])
     return
 
+'''
 ###############################################################################
 ############################# main ############################################
 ###############################################################################
+'''
 
 if __name__ == "__main__":
     '''
@@ -115,14 +120,14 @@ if __name__ == "__main__":
     N.B. all .npz files under same label MUST have structure arrays of same shape!           
     '''
 
-    inputStructures = { 'protein':  [ ['1mtl_A.npz','1mtl_B.npz'],    \
+    inputStructures = { 'protein':  [ ['1le5_A.npz','1le5_B.npz'],    \
                                      {'sc'} ],
-                        'dna':      [ ['1mtl_C.npz','1mtl_D.npz'],    \
+                        'dna':      [ ['1le5_C.npz','1le5_D.npz'],    \
                                      {'ba'} ]
                       }
  
     # optional structure file directory, can leave undefined '' or '.'
-    fileDirectory = 'data'
+    fileDirectory = '../DATA/PDB/npz'
     
     cutoff = 0  # non-zero for a contact map with cutoff value
     mapTitle = 'sidechain-base contacts'
