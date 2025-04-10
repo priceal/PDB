@@ -191,11 +191,11 @@ def extractProteinStructure( chain ):
 # variables for main
 # inputs
 #structureDirectory = '/home/allen/projects/DATA/db/assemblies'
-structureListFile = './csv/sort715.csv'
+structureListFile = './csv/sort713.csv'
 
 #outputs
 outputDirectory = '/home/allen/projects/DATA/PDB/npz'
-logFile = 'mSA_715.log'
+logFile = 'mSA_713.log'
 
 # N.B. MMCIFParser assigns author chainids
 # the sequence determined is from the residues present in the structure
@@ -211,29 +211,24 @@ parser = MMCIFParser(QUIET=True)
 # main loop
 for entry in structureDf.itertuples():
     print(entry.pdbid,end=' ')
-
     '''
     1. load and parse the mmCIF file into a biopython structure object
     '''
-    
     structure = parser.get_structure(entry.pdbid,entry.path)
+    model = structure[0]
     
     # for log file
     # list number of models, and number of chains in model 0
     logOut.write(f'\nfile: {entry.path} \n')
     logOut.write(f'{entry.pdbid}: {len(structure)} model(s). ')
-    chains = []
-    model = structure[0]
     logOut.write(\
        f'{len(model)} chain(s) in model 0: {tuple(model.child_dict.keys())} \n')
-    
     '''
     2. make data directory if needed
     '''
     # create the structure and sequence arrays
     # each entry in the dictionary will be a structure/sequence for a chain
     os.makedirs(outputDirectory,exist_ok=True)
-    
     '''
     3. loop through all chains and send to correct extractor
     '''
